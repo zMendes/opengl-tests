@@ -8,9 +8,7 @@ uniform mat4 projection;
 
 out vec3 ourColor;
 
-void main()
-{
-
+void main() {
     gl_Position = projection * view * model * aPos, 1.0;
     ourColor = aColor;
 }

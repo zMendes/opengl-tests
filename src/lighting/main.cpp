@@ -24,7 +24,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // CAMERA
-Camera camera(glm::vec3(0.0f, 5.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+Camera camera(glm::vec3(0.0f, 2.0f, 8.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 bool firstMouse = true;
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
@@ -67,11 +67,10 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // build and compile our shader program
-    Shader ourShader("shaders.vs", "shaders.fs"); // you can name your shader files however you like
-
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    Cube cube = Cube(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(.5f, .5f, .5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.5f, 0.31f));
+    Shader colorShader("color_shaders.vs", "color_shaders.fs"); // you can name your shader files however you like
+    Shader lightShader("light_shaders.vs", "light_shaders.fs");
+    // CUBE
+    Cube cube = Cube(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(.5f, .5f, .5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -81,11 +80,32 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, cube.get_vertices().size() * sizeof(float), cube.get_vertices().data(), GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
     // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    // normal attribute
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    // LIGHT
+    unsigned int lightVAO, lightVBO;
+    glGenVertexArrays(1, &lightVAO);
+    glGenBuffers(1, &lightVBO);
+    glBindVertexArray(lightVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, lightVBO);
+
+    glBufferData(GL_ARRAY_BUFFER, cube.get_vertices().size() * sizeof(float), cube.get_vertices().data(), GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -102,22 +122,36 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
         // render the triangle
-        ourShader.use();
+        colorShader.use();
 
         // create uniforms
         // projection matrix
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        ourShader.setMat4("projection", projection);
+        colorShader.setMat4("projection", projection);
         // model matrix
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(10.0f, 10.0f, 10.0f));
-        ourShader.setMat4("model", model);
+        cube.rotate(glm::vec3(0.0f, 0.4f, 0.0f));
+        colorShader.setMat4("model", cube.get_model_matrix());
         // view matrix
         glm::mat4 view = camera.GetViewMatrix();
-        ourShader.setMat4("view", view);
+        colorShader.setMat4("view", view);
+        colorShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        colorShader.setVec3("lightPos", lightPos);
+        colorShader.setVec3("viewPos", camera.Position);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawArrays(GL_TRIANGLES, 0, cube.get_vertices().size() / 9);
+
+        // render the light cube
+        lightShader.use();
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f));
+        lightShader.setMat4("projection", projection);
+        lightShader.setMat4("view", view);
+        lightShader.setMat4("model", model);
+
+        glBindVertexArray(lightVAO);
+        glDrawArrays(GL_TRIANGLES, 0, cube.get_vertices().size() / 9);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);

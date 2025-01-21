@@ -1,4 +1,6 @@
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <vector>
 
 class Cube
@@ -8,67 +10,49 @@ class Cube
 
     void create_vertices()
     {
-        // Define the vertices for a cube centered at the origin (0, 0, 0)
-        // Vertices are adjusted based on position, scale, and rotation
-        float halfSizeX = scale.x / 2.0f;
-        float halfSizeY = scale.y / 2.0f;
-        float halfSizeZ = scale.z / 2.0f;
-
         vertices = {
-            // Front face
-            position.x - halfSizeX, position.y - halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Bottom-left
-            position.x + halfSizeX, position.y - halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Bottom-right
-            position.x + halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
+            // Positions               // Colors                // Normals
+            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
+            0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
+            0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
+            0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
+            -0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
+            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
 
-            position.x + halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
-            position.x - halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-left
-            position.x - halfSizeX, position.y - halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Bottom-left
+            -0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+            -0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
 
-            // Back face
-            position.x - halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
-            position.x + halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-right
-            position.x + halfSizeX, position.y + halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Top-right
+            -0.5f, 0.5f, 0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
 
-            position.x + halfSizeX, position.y + halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Top-right
-            position.x - halfSizeX, position.y + halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Top-left
-            position.x - halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
+            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
 
-            // Left face
-            position.x - halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
-            position.x - halfSizeX, position.y - halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Bottom-right
-            position.x - halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
+            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
 
-            position.x - halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
-            position.x - halfSizeX, position.y + halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Top-left
-            position.x - halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
-
-            // Right face
-            position.x + halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
-            position.x + halfSizeX, position.y - halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Bottom-right
-            position.x + halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
-
-            position.x + halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
-            position.x + halfSizeX, position.y + halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Top-left
-            position.x + halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
-
-            // Top face
-            position.x - halfSizeX, position.y + halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
-            position.x + halfSizeX, position.y + halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-right
-            position.x + halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
-
-            position.x + halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
-            position.x - halfSizeX, position.y + halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-left
-            position.x - halfSizeX, position.y + halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
-
-            // Bottom face
-            position.x - halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
-            position.x + halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-right
-            position.x + halfSizeX, position.y - halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
-
-            position.x + halfSizeX, position.y - halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-right
-            position.x - halfSizeX, position.y - halfSizeY, position.z + halfSizeZ, color.r, color.g, color.b, // Top-left
-            position.x - halfSizeX, position.y - halfSizeY, position.z - halfSizeZ, color.r, color.g, color.b, // Bottom-left
-        };
+            -0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f};
     }
 
 public:
@@ -85,25 +69,41 @@ public:
     glm::vec3 get_rotation() const { return rotation; }
     glm::vec3 get_color() const { return color; }
     const std::vector<float> &get_vertices() const { return vertices; }
+    glm::mat4 get_model_matrix() const
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, position);
+        model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, scale);
+        return model;
+    }
 
     void set_position(const glm::vec3 &new_position)
     {
         position = new_position;
-        create_vertices();
     }
     void set_scale(const glm::vec3 &new_scale)
     {
         scale = new_scale;
-        create_vertices();
     }
     void set_rotation(const glm::vec3 &new_rotation)
     {
         rotation = new_rotation;
-        create_vertices();
     }
     void set_color(const glm::vec3 &new_color)
     {
         color = new_color;
         create_vertices();
+    }
+
+    void translate(const glm::vec3 &translation)
+    {
+        position += translation;
+    }
+    void rotate(const glm::vec3 &rotation)
+    {
+        this->rotation += rotation;
     }
 };
