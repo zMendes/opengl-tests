@@ -12,48 +12,48 @@ class Cube
     void create_vertices()
     {
         vertices = {
-            // Positions               // Colors                // Normals
-            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
-            0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
-            0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
-            0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
-            -0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
-            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 0.0f, -1.0f,
+            // Positions              // Normals
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
 
-            -0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-            0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-            -0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
 
-            -0.5f, 0.5f, 0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
-            -0.5f, 0.5f, -0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
-            -0.5f, 0.5f, 0.5f, color.r, color.g, color.b, -1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
 
-            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
-            0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
-            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
 
-            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
-            0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
-            0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
-            0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
-            -0.5f, -0.5f, 0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, -1.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
 
-            -0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
-            0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
-            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
-            0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
-            -0.5f, 0.5f, 0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f,
-            -0.5f, 0.5f, -0.5f, color.r, color.g, color.b, 0.0f, 1.0f, 0.0f};
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
     }
 
 public:
@@ -61,8 +61,8 @@ public:
     Cube(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation, glm::vec3 color)
         : position(position), scale(scale), rotation(rotation), color(color)
     {
-        ambient = glm::vec3(0.25f, 0.5f, 0.31f);
-        diffuse = glm::vec3(1.0f, 0.5f, 0.31f);
+        ambient = glm::vec3(0.25f, 0.f, 0.f);
+        diffuse = glm::vec3(1.0f, 0.f, 0.f);
         specular = glm::vec3(0.5f, 0.5f, 0.5f);
         shininess = 32.0f;
         create_vertices();

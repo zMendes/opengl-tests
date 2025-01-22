@@ -15,7 +15,6 @@ struct Material {
 };
 out vec4 FragColor;
 
-in vec3 ourColor;
 in vec3 normal;
 in vec3 fragPos;
 
@@ -39,6 +38,6 @@ void main() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular = (material.specular * spec) * light.specular;
 
-    vec3 result = (ambient + diffuse + specular) * ourColor;
+    vec3 result = (ambient + diffuse + specular);
     FragColor = vec4(result, 1.0);
 }
