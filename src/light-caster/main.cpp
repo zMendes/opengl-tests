@@ -91,13 +91,13 @@ int main()
 
     // CUBE 2
     Cube cube2 = Cube(glm::vec3(1.3f, 0.5f, 0.0f), glm::vec3(.9f, .9f, .9f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
-    //CUBE 3
+    // CUBE 3
     Cube cube3 = Cube(glm::vec3(3.3f, 0.5f, 0.0f), glm::vec3(.4f, .4f, .4f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
-    //CUBE 4
+    // CUBE 4
     Cube cube4 = Cube(glm::vec3(5.3f, 0.5f, 0.0f), glm::vec3(.4f, .4f, .4f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
-    //CUBE 5
+    // CUBE 5
     Cube cube5 = Cube(glm::vec3(7.3f, 0.5f, 0.0f), glm::vec3(.4f, .4f, .4f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
-    //CUBE 6
+    // CUBE 6
     Cube cube6 = Cube(glm::vec3(12.3f, 0.5f, 0.0f), glm::vec3(.4f, .4f, .4f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
 
     // CUBES LIST
@@ -109,13 +109,16 @@ int main()
     cubes.push_back(cube5);
     cubes.push_back(cube6);
 
+    // FLOOR
+    Cube floor = Cube(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(100.0f, 0.5f, 100.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
+
     // TEXTURE
     unsigned int diffuseMap = loadTexture("container2.png");
     unsigned int specularMap = loadTexture("container2_specular.png");
+    unsigned int floorDiffuseMap = loadTexture("floor.jpeg");
+    unsigned int floorSpecularMap = loadTexture("floor_specular.png");
 
     lightingShader.use();
-    lightingShader.setInt("material.diffuse", 0);
-    lightingShader.setInt("material.specular", 1);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -156,6 +159,8 @@ int main()
 
         // CUBE
         // material
+        lightingShader.setInt("material.diffuse", 0);
+        lightingShader.setInt("material.specular", 1);
         lightingShader.setFloat("material.shininess", cube.get_shininess());
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
@@ -174,6 +179,21 @@ int main()
             glBindVertexArray(VAO);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
+        // FLOOR
+        // material
+        lightingShader.setInt("material.diffuse", 2);
+        lightingShader.setInt("material.specular", 3);
+        lightingShader.setFloat("material.shininess", floor.get_shininess());
+        // bind diffuse map
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, floorDiffuseMap);
+        // bind specular map
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, floorSpecularMap);
+        //  model matrix
+        lightingShader.setMat4("model", floor.get_model_matrix());
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
