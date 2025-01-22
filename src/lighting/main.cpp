@@ -89,6 +89,27 @@ int main()
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
+    // CUBE 2
+    Cube cube2 = Cube(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(.5f, .5f, .5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.f, 1.f), glm::vec3(0.0f, 0.4f, 0.f), glm::vec3(1.0f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f), 32.0f);
+    unsigned int VBO2, VAO2;
+    glGenVertexArrays(1, &VAO2);
+    glGenBuffers(1, &VBO2);
+
+    glBindVertexArray(VAO2);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+
+    glBufferData(GL_ARRAY_BUFFER, cube2.get_vertices().size() * sizeof(float), cube2.get_vertices().data(), GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    // normal attribute
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
     // LIGHT
     unsigned int lightVAO, lightVBO;
     glGenVertexArrays(1, &lightVAO);
@@ -124,22 +145,50 @@ int main()
         // render the triangle
         colorShader.use();
 
-        // create uniforms
-        // projection matrix
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        colorShader.setMat4("projection", projection);
-        // model matrix
-        cube.rotate(glm::vec3(0.0f, 0.4f, 0.0f));
-        colorShader.setMat4("model", cube.get_model_matrix());
         // view matrix
         glm::mat4 view = camera.GetViewMatrix();
         colorShader.setMat4("view", view);
-        colorShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-        colorShader.setVec3("lightPos", lightPos);
         colorShader.setVec3("viewPos", camera.Position);
+        // projection matrix
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        colorShader.setMat4("projection", projection);
+
+        // light
+        glm::vec3 lightColor;
+        lightColor.x = sin(glfwGetTime() * 2.0f);
+        lightColor.y = sin(glfwGetTime() * 0.7f);
+        lightColor.z = sin(glfwGetTime() * 1.3f);
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+        colorShader.setVec3("light.ambient", ambientColor);
+        colorShader.setVec3("light.diffuse", diffuseColor);
+        colorShader.setVec3("light.position", lightPos);
+        colorShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+        // CUBE 1
+        //  model matrix
+        cube.rotate(glm::vec3(0.0f, 0.2f, 0.0f));
+        colorShader.setMat4("model", cube.get_model_matrix());
+        // material
+        colorShader.setVec3("material.ambient", cube.get_ambient());
+        colorShader.setVec3("material.diffuse", cube.get_diffuse());
+        colorShader.setVec3("material.specular", cube.get_specular());
+        colorShader.setFloat("material.shininess", cube.get_shininess());
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, cube.get_vertices().size() / 9);
+
+        // CUBE2
+        colorShader.use();
+        cube2.rotate(glm::vec3(0.2f, 0.f, 0.0f));
+        colorShader.setMat4("model", cube2.get_model_matrix());
+        colorShader.setVec3("material.ambient", cube2.get_ambient());
+        colorShader.setVec3("material.diffuse", cube2.get_diffuse());
+        colorShader.setVec3("material.specular", cube2.get_specular());
+        colorShader.setFloat("material.shininess", cube2.get_shininess());
+
+        glBindVertexArray(VAO2);
+        glDrawArrays(GL_TRIANGLES, 0, cube2.get_vertices().size() / 9);
 
         // render the light cube
         lightShader.use();

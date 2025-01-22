@@ -5,7 +5,8 @@
 
 class Cube
 {
-    glm::vec3 position, scale, rotation, color;
+    glm::vec3 position, scale, rotation, color, ambient, diffuse, specular;
+    float shininess;
     std::vector<float> vertices;
 
     void create_vertices()
@@ -60,6 +61,15 @@ public:
     Cube(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation, glm::vec3 color)
         : position(position), scale(scale), rotation(rotation), color(color)
     {
+        ambient = glm::vec3(0.25f, 0.5f, 0.31f);
+        diffuse = glm::vec3(1.0f, 0.5f, 0.31f);
+        specular = glm::vec3(0.5f, 0.5f, 0.5f);
+        shininess = 32.0f;
+        create_vertices();
+    }
+    Cube(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation, glm::vec3 color, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess)
+        : position(position), scale(scale), rotation(rotation), color(color), ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess)
+    {
         create_vertices();
     }
 
@@ -68,6 +78,10 @@ public:
     glm::vec3 get_scale() const { return scale; }
     glm::vec3 get_rotation() const { return rotation; }
     glm::vec3 get_color() const { return color; }
+    glm::vec3 get_ambient() const { return ambient; }
+    glm::vec3 get_diffuse() const { return diffuse; }
+    glm::vec3 get_specular() const { return specular; }
+    float get_shininess() const { return shininess; }
     const std::vector<float> &get_vertices() const { return vertices; }
     glm::mat4 get_model_matrix() const
     {
