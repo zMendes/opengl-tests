@@ -73,7 +73,7 @@ int main()
     Shader shaderSingleColor("lighting_shader.vs", "shaderSingleColor.fs");
 
     // MODEL
-    std::string path = "resources/backpack/backpack.obj";
+    std::string path = "/home/loe/raytracer/resources/backpack/backpack.obj";
     Model backpack(path.c_str());
 
     lightingShader.use();

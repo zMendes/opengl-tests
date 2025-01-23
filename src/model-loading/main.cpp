@@ -71,7 +71,7 @@ int main()
     Shader lightingShader("lighting_shader.vs", "lighting_shader.fs"); // you can name your shader files however you like
 
     // MODEL
-    std::string path = "resources/backpack/backpack.obj";
+    std::string path = "/home/loe/raytracer/resources/backpack/backpack.obj";
     Model backpack(path.c_str());
 
     lightingShader.use();
