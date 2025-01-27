@@ -33,6 +33,8 @@ const glm::vec3 cameraPos = glm::vec3(0.0f, 2.0f, 8.0f);
 // CAMERA
 Camera camera(cameraPos, glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 
+float rotate = 0.0f;
+
 // CAMERA SHADOW MAP
 Camera shadowCamera(cameraPos, glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 bool firstMouse = true;
@@ -236,6 +238,8 @@ void renderScene(Shader &shader, Model backpack)
     // cubes
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
+    rotate += 0.1f;
+    model = glm::rotate(model, glm::radians(rotate), glm::normalize(glm::vec3(1.0, 0.0, 0.0)));
     model = glm::scale(model, glm::vec3(0.5f));
     shader.setMat4("model", model);
     renderCube();
