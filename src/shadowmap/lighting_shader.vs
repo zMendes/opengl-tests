@@ -8,15 +8,20 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 lightPos;
+uniform mat4 lightSpaceMatrix;
 
-out vec3 normal;
-out vec3 fragPos;
-out vec2 texCoords;
+out VS_OUT {
+    vec3 fragPos;
+    vec3 normal;
+    vec2 texCoords;
+    vec4 fragPosLightSpace;
+} vs_out;
 
 void main() {
-    fragPos = vec3(model * vec4(aPos, 1.0));
+    vs_out.fragPos = vec3(model * vec4(aPos, 1.0));
 
     gl_Position = projection * view * model * vec4(aPos, 1.0);
-    normal  = mat3(transpose(inverse(model))) * aNormal;
-    texCoords = aTexCoords;
+    vs_out.normal  = mat3(transpose(inverse(model))) * aNormal;
+    vs_out.texCoords = aTexCoords;
+    vs_out.fragPosLightSpace = lightSpaceMatrix * vec4(vs_out.fragPos, 1.0);
 }
