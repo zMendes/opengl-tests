@@ -20,9 +20,7 @@ void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 unsigned int loadTexture(const char *path);
-void renderScene(const Shader &shader);//,std::vector<Cube> cubes, unsigned int diffuseMap, unsigned int specularMap);
-void configureShaderForShadowMap(const Shader &shader);
-void configureShaderForFinalScene(const Shader &shader);
+void renderScene(Shader &shader, Model backpack); //,std::vector<Cube> cubes, unsigned int diffuseMap, unsigned int specularMap);
 void renderQuad();
 void renderCube();
 
@@ -88,25 +86,13 @@ int main()
     Shader lightingShader("lighting_shader.vs", "lighting_shader.fs"); // you can name your shader files however you like
     Shader shadowShader("shadow_shader.vs", "shadow_shader.fs");
 
-    // FLOOR
-    //  FLOOR
-    Cube floor = Cube(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(20.0f, 0.5f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
-    // CUBE 1
-    Cube cube1 = Cube(glm::vec3(1.0f, .10f, 0.0f), glm::vec3(1.0f, 1.f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
-    // CUBE 1
-    Cube cube2 = Cube(glm::vec3(.0f, 1.70f, 3.0f), glm::vec3(1.0f, 1.f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
-    // CUBE 1
-    Cube cube3 = Cube(glm::vec3(1.0f, .101f, 1.60f), glm::vec3(1.0f, 1.f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.f, 0.f));
+    // MODEL
+    std::string path = "/home/loe/raytracer/resources/backpack/backpack.obj";
+    Model backpack(path.c_str());
 
     // TEXTURE
     unsigned int diffuseMap = loadTexture("/home/loe/raytracer/resources/wood.png");
     unsigned int specularMap = loadTexture("/home/loe/raytracer/resources/wood.png");
-
-    std::vector<Cube> cubes = {
-        floor,
-        cube1,
-        cube2,
-        cube3};
 
     float planeVertices[] = {
         // positions            // normals         // texcoords
@@ -186,7 +172,7 @@ int main()
         glClear(GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
-        renderScene(shadowShader);
+        renderScene(shadowShader, backpack);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
@@ -228,7 +214,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, specularMap);
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(lightingShader);
+        renderScene(lightingShader, backpack);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
@@ -240,7 +226,7 @@ int main()
     return 0;
 }
 
-void renderScene(const Shader &shader)
+void renderScene(Shader &shader, Model backpack)
 {
     // floor
     glm::mat4 model = glm::mat4(1.0f);
@@ -264,6 +250,11 @@ void renderScene(const Shader &shader)
     model = glm::scale(model, glm::vec3(0.25));
     shader.setMat4("model", model);
     renderCube();
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(1.0f, 1.2f, 2.0));
+    model = glm::scale(model, glm::vec3(0.5));
+    shader.setMat4("model", model);
+    backpack.Draw(shader);
 }
 
 void renderCube()
