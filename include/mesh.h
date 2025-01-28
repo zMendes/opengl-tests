@@ -48,6 +48,8 @@ public:
                 number = std::to_string(specularNr++);
             else if (name == "texture_normal")
                 number = 1;
+            else if (name == "texture_height")
+                number = 1;
             shader.setInt(("material." + name + number).c_str(), i);
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }

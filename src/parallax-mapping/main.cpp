@@ -69,22 +69,17 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // build and compile our shader program
-    Shader lightingShader("lighting_shader.vs", "lighting_shader.fs"); // you can name your shader files however you like
+    Shader shader("lighting_shader.vs", "lighting_shader.fs"); // you can name your shader files however you like
 
-    // MODEL
-    std::string path = "/home/loe/raytracer/resources/cyborg/cyborg.obj";
-    Model backpack(path.c_str());
-
-    lightingShader.use();
+    shader.use();
     glm::vec3 lightPos(0.5f, 1.3f, 0.3f);
-    glm::mat4 model = glm::mat4(1.0f);
 
     unsigned int diffuseMap = loadTexture("/home/loe/raytracer/resources/bricks2.jpg");
     unsigned int normalMap = loadTexture("/home/loe/raytracer/resources/bricks2_normal.jpg");
     unsigned int heightMap = loadTexture("/home/loe/raytracer/resources/bricks2_disp.jpg");
-    lightingShader.setInt("diffuseMap", 0);
-    lightingShader.setInt("normalMap", 1);
-    lightingShader.setInt("depthMap", 2);
+    shader.setInt("diffuseMap", 0);
+    shader.setInt("normalMap", 1);
+    shader.setInt("depthMap", 2);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -101,33 +96,35 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
         // render the triangle
-        lightingShader.use();
+        shader.use();
 
-        // view matrix
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        lightingShader.setMat4("view", view);
-        lightingShader.setVec3("viewPos", camera.Position);
+        shader.setMat4("view", view);
+        shader.setVec3("viewPos", camera.Position);
         // projection matrix
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
-        lightingShader.setMat4("projection", projection);
+        shader.setMat4("projection", projection);
 
         // spotLight
-        lightingShader.setVec3("lightPos", lightPos);
+        shader.setVec3("lightPos", lightPos);
 
         // render parallax-mapped quad
-        lightingShader.setVec3("viewPos", camera.Position);
-        lightingShader.setVec3("lightPos", lightPos);
+        shader.setVec3("viewPos", camera.Position);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, normalMap);
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, heightMap);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians((float)glfwGetTime() * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0))); // rotate the quad to show parallax mapping from multiple directions
+        shader.setMat4("model", model);
+        renderQuad();
         // render light source (simply re-renders a smaller plane at the light's position for debugging/visualization)
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.5f ,1.3f, 0.5));
-        model = glm::scale(model, glm::vec3(1.f));
-        lightingShader.setMat4("model", model);
+        model = glm::translate(model, glm::vec3(0.5f, 1.3f, 0.5));
+        model = glm::scale(model, glm::vec3(.1f));
+        shader.setMat4("model", model);
         renderQuad();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

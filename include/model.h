@@ -96,7 +96,7 @@ private:
                 vec.x = mesh->mTextureCoords[0][i].x;
                 vec.y = mesh->mTextureCoords[0][i].y;
                 vertex.TexCoords = vec;
-                //tangent
+                // tangent
                 vector.x = mesh->mTangents[i].x;
                 vector.y = mesh->mTangents[i].y;
                 vector.z = mesh->mTangents[i].z;
@@ -134,6 +134,9 @@ private:
             // normal map
             std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
             textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+            // height map
+            std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+            textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
         }
         return Mesh(vertices, indices, textures, shininess);
     }
