@@ -74,9 +74,9 @@ int main()
     shader.use();
     glm::vec3 lightPos(0.5f, 1.3f, 0.3f);
 
-    unsigned int diffuseMap = loadTexture("/home/loe/raytracer/resources/bricks2.jpg");
-    unsigned int normalMap = loadTexture("/home/loe/raytracer/resources/bricks2_normal.jpg");
-    unsigned int heightMap = loadTexture("/home/loe/raytracer/resources/bricks2_disp.jpg");
+    unsigned int diffuseMap = loadTexture("/home/loe/raytracer/resources/wood.png");
+    unsigned int normalMap = loadTexture("/home/loe/raytracer/resources/toy_box_normal.png");
+    unsigned int heightMap = loadTexture("/home/loe/raytracer/resources/toy_box_disp.png");
     shader.setInt("diffuseMap", 0);
     shader.setInt("normalMap", 1);
     shader.setInt("depthMap", 2);
@@ -102,14 +102,9 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();
         shader.setMat4("view", view);
         shader.setVec3("viewPos", camera.Position);
-        // projection matrix
         shader.setMat4("projection", projection);
-
-        // spotLight
-        shader.setVec3("lightPos", lightPos);
-
-        // render parallax-mapped quad
         shader.setVec3("viewPos", camera.Position);
+        shader.setInt("heightScale", 2);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
         glActiveTexture(GL_TEXTURE1);
