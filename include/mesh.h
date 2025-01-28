@@ -6,6 +6,8 @@ struct Vertex
     glm::vec3 Position;
     glm::vec3 Normal;
     glm::vec2 TexCoords;
+    glm::vec3 Tangent;
+    glm::vec3 Bitangent;
 };
 
 struct Texture
@@ -31,7 +33,7 @@ public:
     void Draw(Shader &shader)
     {
         shader.setFloat("material.shininess", shininess); // default value
-        
+
         unsigned int diffuseNr = 1;
         unsigned int specularNr = 1;
         for (unsigned int i = 0; i < textures.size(); i++)
@@ -44,6 +46,8 @@ public:
                 number = std::to_string(diffuseNr++);
             else if (name == "texture_specular")
                 number = std::to_string(specularNr++);
+            else if (name == "texture_normal")
+                number = 1;
             shader.setInt(("material." + name + number).c_str(), i);
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
@@ -78,6 +82,12 @@ private:
         // texture attribute
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, TexCoords));
         glEnableVertexAttribArray(2);
+        // normal tangent attribute
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Tangent));
+        glEnableVertexAttribArray(3);
+        // normal bitangent attribute
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Bitangent));
+        glEnableVertexAttribArray(4);
 
         glBindVertexArray(0);
     };
