@@ -34,6 +34,10 @@ float lastY = SCR_HEIGHT / 2.0f;
 
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
+
+bool hdr = false;
+bool hdrKeyPressed = false;
+
 int main()
 {
     // glfw: initialize and configure
@@ -92,24 +96,8 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // TEXTURE
-    unsigned int diffuseMap = loadTexture("/home/loe/raytracer/resources/wood.png");
-
-    shader.use();
-    // positions
-    std::vector<glm::vec3> lightPositions;
-    lightPositions.push_back(glm::vec3(0.0f, -9.f, 0.0f));
-    // lightPositions.push_back(glm::vec3(0.0f, 0.0f, 0.5f)); // back light
-    lightPositions.push_back(glm::vec3(-1.4f, -1.9f, 9.0f));
-    lightPositions.push_back(glm::vec3(0.0f, -1.8f, 4.0f));
-    lightPositions.push_back(glm::vec3(0.8f, -1.7f, 6.0f));
-    // colors
-    std::vector<glm::vec3> lightColors;
-    lightColors.push_back(glm::vec3(200.0f, 200.0f, 200.0f));
-    lightColors.push_back(glm::vec3(0.1f, 0.0f, 0.0f));
-    lightColors.push_back(glm::vec3(0.0f, 0.0f, 0.2f));
-    lightColors.push_back(glm::vec3(0.0f, 0.1f, 0.0f));
-    // HDR FRAMEBUFFER
+    // configure floating point framebuffer
+    // ------------------------------------
     unsigned int hdrFBO;
     glGenFramebuffers(1, &hdrFBO);
     // create floating point color buffer
@@ -132,6 +120,23 @@ int main()
         std::cout << "Framebuffer not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    // TEXTURE
+    unsigned int diffuseMap = loadTexture("/home/loe/raytracer/resources/wood.png");
+
+    shader.use();
+    // positions
+    std::vector<glm::vec3> lightPositions;
+    lightPositions.push_back(glm::vec3(0.0f, 0.f, -9.0f));
+    // lightPositions.push_back(glm::vec3(0.0f, 0.0f, 0.5f)); // back light
+    lightPositions.push_back(glm::vec3(-1.4f, -1.9f, 9.0f));
+    lightPositions.push_back(glm::vec3(0.0f, -1.8f, 4.0f));
+    lightPositions.push_back(glm::vec3(0.8f, -1.7f, 6.0f));
+    // colors
+    std::vector<glm::vec3> lightColors;
+    lightColors.push_back(glm::vec3(200.0f, 200.0f, 200.0f));
+    lightColors.push_back(glm::vec3(0.1f, 0.0f, 0.0f));
+    lightColors.push_back(glm::vec3(0.0f, 0.0f, 0.2f));
+    lightColors.push_back(glm::vec3(0.0f, 0.1f, 0.0f));
     // render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -144,12 +149,11 @@ int main()
 
         // render
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // render the triangle
         shader.use();
@@ -162,13 +166,13 @@ int main()
         // point light 1
         for (unsigned int i = 0; i < lightPositions.size(); i++)
         {
-            shader.setVec3("lights[" + std::to_string(i) + "].position", lightPositions[i]);
-            shader.setVec3("lights[" + std::to_string(i) + "].color", lightColors[i]);
+            shader.setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
+            shader.setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
         }
         // CUBE
         // material
-        shader.setInt("material.diffuse", 0);
-        shader.setFloat("material.shininess", cube.get_shininess());
+        shader.setInt("diffuseTexture", 0);
+        shader.setInt("inverse_normals", true);
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -180,15 +184,17 @@ int main()
         shader.setMat4("model", model);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, cube.get_vertices().size());
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        //// RENDER TO QUAD
-        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        // hdrShader.use();
-        // glActiveTexture(GL_TEXTURE0);
-        // glBindTexture(GL_TEXTURE_2D, colorBuffer);
-        // hdrShader.setInt("hdrBuffer", 0);
-        // hdrShader.setInt("hdr", 1);
-        // renderQuad();
+        // RENDER TO QUAD
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        hdrShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, colorBuffer);
+        hdrShader.setInt("hdrBuffer", 0);
+        hdrShader.setInt("hdr", hdr);
+        hdrShader.setFloat("exposure", 1.0);
+        renderQuad();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
@@ -217,6 +223,16 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !hdrKeyPressed)
+    {
+        hdr = !hdr;
+        hdrKeyPressed = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+    {
+        hdrKeyPressed = false;
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -297,10 +313,26 @@ void renderQuad()
     {
         float quadVertices[] = {
             // positions        // texture Coords
-            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+            -1.0f,
+            1.0f,
+            0.0f,
+            0.0f,
+            1.0f,
+            -1.0f,
+            -1.0f,
+            0.0f,
+            0.0f,
+            0.0f,
+            1.0f,
+            1.0f,
+            0.0f,
+            1.0f,
+            1.0f,
+            1.0f,
+            -1.0f,
+            0.0f,
+            1.0f,
+            0.0f,
         };
         // setup plane VAO
         glGenVertexArrays(1, &quadVAO);
@@ -309,9 +341,9 @@ void renderQuad()
         glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
     }
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

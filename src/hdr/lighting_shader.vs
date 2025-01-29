@@ -1,22 +1,28 @@
 #version 330 core
 in vec3 aPos;
-in vec3 aColor;
 in vec3 aNormal;
 in vec2 aTexCoords;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-uniform vec3 lightPos;
+out VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+} vs_out;
 
-out vec3 normal;
-out vec3 fragPos;
-out vec2 texCoords;
+uniform mat4 view;
+uniform mat4 model;
+uniform mat4 projection;
+
+uniform bool inverse_normals;
 
 void main() {
-    fragPos = vec3(model * vec4(aPos, 1.0));
+    vs_out.FragPos = vec3(model * vec4(aPos, 1.0));   
+    vs_out.TexCoords = aTexCoords;
+
+    vec3 n = inverse_normals ? -aNormal : aNormal;
+
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    vs_out.Normal = normalize(normalMatrix * n);
 
     gl_Position = projection * view * model * vec4(aPos, 1.0);
-    normal  = mat3(transpose(inverse(model))) * aNormal;
-    texCoords = aTexCoords;
 }
