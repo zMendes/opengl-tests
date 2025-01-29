@@ -37,6 +37,7 @@ float lastFrame = 0.0f; // Time of last frame
 
 bool hdr = false;
 bool hdrKeyPressed = false;
+float exposure = 1.0f;
 
 int main()
 {
@@ -193,7 +194,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, colorBuffer);
         hdrShader.setInt("hdrBuffer", 0);
         hdrShader.setInt("hdr", hdr);
-        hdrShader.setFloat("exposure", 1.0);
+        hdrShader.setFloat("exposure", exposure);
         renderQuad();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -232,6 +233,18 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
     {
         hdrKeyPressed = false;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+    {
+        if (exposure > 0.0f)
+            exposure -= 0.001f;
+        else
+            exposure = 0.0f;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+    {
+        exposure += 0.001f;
     }
 }
 
