@@ -205,11 +205,17 @@ int main()
         {
             deferredShader.setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
             deferredShader.setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
-            // update attenuation parameters and calculate radius
-            const float linear = 0.7f;
-            const float quadratic = 1.8f;
+            float constant = 1.0;
+            float linear = 0.7;
+            float quadratic = 1.8;
+            float lightMax = std::fmaxf(std::fmaxf(lightColors[i].r, lightColors[i].g), lightColors[i].b);
+            float radius = (-linear + std::sqrtf(linear * linear - 4 * quadratic *
+                                                                       (constant - (256.0 / 5.0) * lightMax))) /
+                           (2 * quadratic);
             deferredShader.setFloat("lights[" + std::to_string(i) + "].Linear", linear);
             deferredShader.setFloat("lights[" + std::to_string(i) + "].Quadratic", quadratic);
+                        deferredShader.setFloat("lights[" + std::to_string(i) + "].Radius", radius);
+
         }
         deferredShader.setMat4("projection", projection);
         deferredShader.setMat4("view", view);
