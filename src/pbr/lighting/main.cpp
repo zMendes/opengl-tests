@@ -171,7 +171,7 @@ void renderScene(Shader &shader , bool is2nd = false)
 
             model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(
-                                              (- (nrColumns / 2)) * spacing,
+                                              (is2nd + col - (nrColumns / 2)) * spacing,
                                               (row - (nrRows / 2)) * spacing,
                                               0.0f));
             shader.setMat4("model", model);
