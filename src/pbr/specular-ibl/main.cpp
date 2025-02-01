@@ -294,7 +294,7 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
         glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, brdfLUTTexture);
+        glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
         renderScene(shader, false);
 
         glActiveTexture(GL_TEXTURE0);
