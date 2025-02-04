@@ -158,7 +158,7 @@ int main()
             glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
             glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f))};
 
-    unsigned int hdrMap = loadHDR("/home/loe/raytracer/resources/newport_loft.hdr");
+    unsigned int hdrMap = loadHDR("/home/loe/Downloads/HDR_041_Path/HDR_041_Path.hdr");
 
     glViewport(0, 0, 512, 512);
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
