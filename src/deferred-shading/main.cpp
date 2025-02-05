@@ -49,7 +49,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw window creation
-    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Demo", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -90,7 +90,6 @@ int main()
     objectPositions.push_back(glm::vec3(0.0, -0.5, 3.0));
     objectPositions.push_back(glm::vec3(3.0, -0.5, 3.0));
     // GBUFFERRRRR
-    // ------------------------------------
     unsigned int gBuffer;
     glGenFramebuffers(1, &gBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -134,7 +133,7 @@ int main()
     gShader.use();
     // lighting info
     // -------------
-    const unsigned int NR_LIGHTS = 32;
+    const unsigned int NR_LIGHTS = 15;
     std::vector<glm::vec3> lightPositions;
     std::vector<glm::vec3> lightColors;
     srand(13);
@@ -146,9 +145,9 @@ int main()
         float zPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
         lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
         // also calculate random color
-        float rColor = static_cast<float>(((rand() % 100) / 200.0f)); // between 0.5 and 1.0
-        float gColor = static_cast<float>(((rand() % 100) / 200.0f)); // between 0.5 and 1.0
-        float bColor = static_cast<float>(((rand() % 100) / 200.0f)); // between 0.5 and 1.0
+        float rColor = static_cast<float>(((rand() % 100) / 200.0f + 0.5)); // between 0.5 and 1.0
+        float gColor = static_cast<float>(((rand() % 100) / 200.0f + 0.5)); // between 0.5 and 1.0
+        float bColor = static_cast<float>(((rand() % 100) / 200.0f + 0.5)); // between 0.5 and 1.0
         lightColors.push_back(glm::vec3(rColor, gColor, bColor));
     }
     // render loop
@@ -176,7 +175,6 @@ int main()
         gShader.setMat4("projection", projection);
         gShader.setMat4("view", view);
         gShader.setVec3("viewPos", camera.Position);
-        // bind diffuse map
 
         //  model matrix
         glm::mat4 model = glm::mat4(1.0f);
@@ -242,7 +240,7 @@ int main()
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, lightPositions[i]);
-            model = glm::scale(model, glm::vec3(0.25f));
+            model = glm::scale(model, glm::vec3(0.1f));
             lightBoxShader.setMat4("model", model);
             lightBoxShader.setVec3("lightColor", lightColors[i]);
             renderCube();

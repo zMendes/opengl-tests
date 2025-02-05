@@ -71,8 +71,14 @@ int main()
     Shader lightingShader("lighting_shader.vs", "lighting_shader.fs"); // you can name your shader files however you like
 
     // MODEL
-    std::string path = "/home/loe/raytracer/resources/cyborg/cyborg.obj";
+    std::string path = "/home/loe/raytracer/resources/backpack/backpack.obj";
     Model backpack(path.c_str());
+
+    path = "/home/loe/raytracer/resources/cyborg/cyborg.obj";
+    Model cyborg(path.c_str());
+
+    path = "/home/loe/raytracer/resources/planet/planet.obj";
+    Model planet(path.c_str());
 
     lightingShader.use();
     glm::vec3 pointLightPositions[] = {
@@ -157,12 +163,19 @@ int main()
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 2.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));     // it's a bit too big for our scene, so scale it down
+        model = glm::translate(model, glm::vec3(0.0f, 2.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
         lightingShader.setMat4("model", model);
         backpack.Draw(lightingShader);
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+        model = glm::translate(model, glm::vec3(-3.0f, -2.0f, 0.0f));
+        lightingShader.setMat4("model", model);
+        cyborg.Draw(lightingShader);
+
+        model = glm::translate(model, glm::vec3(9.0f, 2.0f, 0.0f));
+        lightingShader.setMat4("model", model);
+        planet.Draw(lightingShader);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
